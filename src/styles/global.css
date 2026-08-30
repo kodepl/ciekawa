@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.ruled-bg {
+  background-color: #f2e9d8;
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 27px,
+    #d9cdb8 27px,
+    #d9cdb8 28px
+  );
+  background-position: 0 8px;
+}
+
+.margin-col {
+  border-left: 2px dashed #c0392b33;
+}
+
+.stamp-box {
+  border: 3px double #c0392b;
+  transform: rotate(-2deg);
+}

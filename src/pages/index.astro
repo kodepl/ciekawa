@@ -1,0 +1,62 @@
+---
+import Skoroszyt from "../layouts/Skoroszyt.astro";
+import { getCollection } from "astro:content";
+import site, { coverFor, rubrykaSlug } from "../site.config";
+
+const posts = (await getCollection("notatki")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const lead = posts[0];
+const rest = posts.slice(1, 7);
+const sidebar = posts.slice(7);
+---
+<Skoroszyt title={site.name} description={site.tagline} image={site.heroImage}>
+  <main class="mx-auto max-w-5xl px-4 py-10">
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_220px]">
+      <div>
+        {lead && (
+          <section class="margin-col pl-6">
+            <p class="font-mono text-[10px] uppercase tracking-widest text-stamp">Karta dnia · {lead.data.issue || site.issue}</p>
+            <h2 class="mt-2 font-serif text-3xl font-bold leading-tight md:text-4xl">
+              <a href={`/notatki/${lead.slug}/`} class="hover:text-stamp">{lead.data.title}</a>
+            </h2>
+            <p class="mt-3 text-pencil">{lead.data.description}</p>
+            <a href={`/notatki/${lead.slug}/`} class="mt-5 inline-block font-mono text-xs uppercase tracking-widest text-stamp hover:underline">Czytaj notatkę →</a>
+            <img src={coverFor(lead.data.rubryka, lead.data.image)} alt="" class="mt-6 w-full border-2 border-ink object-cover" />
+          </section>
+        )}
+
+        <section class="mt-12 grid gap-8 sm:grid-cols-2">
+          {rest.map((post, i) => (
+            <article class={i === 0 ? "sm:col-span-2 sm:grid sm:grid-cols-2 sm:gap-4" : ""}>
+              <img src={coverFor(post.data.rubryka, post.data.image)} alt="" class="mb-3 h-36 w-full border border-ink/20 object-cover sm:mb-0" />
+              <div>
+                <p class="font-mono text-[10px] uppercase text-pencil">{post.data.rubryka}</p>
+                <h3 class="mt-1 font-serif text-xl font-semibold leading-snug">
+                  <a href={`/notatki/${post.slug}/`} class="hover:text-stamp">{post.data.title}</a>
+                </h3>
+              </div>
+            </article>
+          ))}
+        </section>
+      </div>
+
+      <aside class="space-y-6">
+        <div class="border-2 border-ink bg-margin p-4">
+          <p class="font-mono text-[10px] uppercase tracking-widest text-stamp">Rubryki</p>
+          <ul class="mt-3 space-y-2 text-sm">
+            {site.rubryki.map((r) => (
+              <li><a class="hover:text-stamp" href={`/rubryki/${rubrykaSlug(r.name)}/`}>→ {r.name}</a></li>
+            ))}
+          </ul>
+        </div>
+        {sidebar.map((post) => (
+          <div class="border-l-4 border-stamp pl-3">
+            <p class="font-mono text-[9px] uppercase text-pencil">{post.data.rubryka}</p>
+            <a href={`/notatki/${post.slug}/`} class="text-sm font-semibold leading-snug hover:text-stamp">{post.data.title}</a>
+          </div>
+        ))}
+      </aside>
+    </div>
+  </main>
+</Skoroszyt>

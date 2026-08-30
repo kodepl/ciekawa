@@ -1,0 +1,18 @@
+---
+import Skoroszyt from "../../layouts/Skoroszyt.astro";
+import site, { rubrykaSlug } from "../../site.config";
+---
+<Skoroszyt title="Rubryki" description="Działy skoroszytu">
+  <main class="mx-auto max-w-4xl px-4 py-10">
+    <h1 class="font-serif text-4xl font-bold">Rubryki</h1>
+    <div class="mt-10 grid gap-4 sm:grid-cols-2">
+      {site.rubryki.map((r, i) => (
+        <a href={`/rubryki/${rubrykaSlug(r.name)}/`} class="border-2 border-ink bg-margin p-6 transition hover:bg-paper">
+          <p class="font-mono text-stamp">{String(i + 1).padStart(2, "0")}</p>
+          <h2 class="mt-1 font-serif text-2xl font-bold">{r.name}</h2>
+          <p class="mt-2 text-sm text-pencil">{r.blurb}</p>
+        </a>
+      ))}
+    </div>
+  </main>
+</Skoroszyt>

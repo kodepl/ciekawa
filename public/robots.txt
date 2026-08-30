@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://www.ciekawa.com.pl/sitemap-0.xml

@@ -1,0 +1,33 @@
+---
+import Skoroszyt from "../../layouts/Skoroszyt.astro";
+import { getCollection } from "astro:content";
+import site, { coverFor, rubrykaSlug } from "../../site.config";
+
+export async function getStaticPaths() {
+  return site.rubryki.map((r) => ({ params: { slug: rubrykaSlug(r.name) }, props: { rubryka: r } }));
+}
+
+const { rubryka } = Astro.props;
+const posts = (await getCollection("notatki"))
+  .filter((p) => p.data.rubryka === rubryka.name)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+<Skoroszyt title={rubryka.name} description={rubryka.blurb}>
+  <main class="mx-auto max-w-4xl px-4 py-10">
+    <p class="font-mono text-[10px] uppercase tracking-widest text-stamp">Rubryka</p>
+    <h1 class="mt-2 font-serif text-4xl font-bold">{rubryka.name}</h1>
+    <p class="mt-3 text-pencil">{rubryka.blurb}</p>
+    <ul class="mt-10 space-y-6">
+      {posts.map((post) => (
+        <li class="flex gap-4 border-b border-ruled pb-6">
+          <img src={coverFor(post.data.rubryka, post.data.image)} alt="" class="h-20 w-24 border border-ink/20 object-cover" />
+          <div>
+            <a href={`/notatki/${post.slug}/`} class="font-serif text-2xl font-semibold hover:text-stamp">{post.data.title}</a>
+            <p class="mt-1 text-sm text-pencil">{post.data.description}</p>
+          </div>
+        </li>
+      ))}
+      {posts.length === 0 && <p class="text-pencil">W tej rubryce wkrótce pierwsze notatki.</p>}
+    </ul>
+  </main>
+</Skoroszyt>
