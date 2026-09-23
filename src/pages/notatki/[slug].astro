@@ -12,6 +12,12 @@ const { post } = Astro.props;
 const { Content } = await post.render();
 const cover = coverFor(post.data.rubryka, post.data.image);
 const date = post.data.pubDate.toLocaleDateString("pl-PL", { day: "numeric", month: "long", year: "numeric" });
+const pile = (await getCollection("notatki")).sort((a, b) => +new Date(b.data.pubDate) - +new Date(a.data.pubDate));
+const here = pile.findIndex((p) => p.slug === post.slug);
+const newer = here > 0 ? pile[here - 1] : null;
+const older = here >= 0 && here < pile.length - 1 ? pile[here + 1] : null;
+const also = pile.filter((p) => p.slug !== post.slug).slice(0, 3);
+
 ---
 <Skoroszyt title={post.data.title} description={post.data.description} image={cover}>
   <article class="mx-auto max-w-3xl px-4 py-10">
@@ -32,4 +38,11 @@ const date = post.data.pubDate.toLocaleDateString("pl-PL", { day: "numeric", mon
       </div>
     </div>
   </article>
+
+<section class="mx-auto max-w-3xl px-4 pb-16">
+  <div class="margin-col mt-6 grid gap-4 pl-6 sm:grid-cols-2">
+    {older && <a class="border-2 border-ink p-4" href={"/notatki/" + older.slug + "/"}><p class="font-mono text-[10px] uppercase text-stamp">karta wcześniejsza</p><p class="mt-2 font-serif text-2xl font-bold">{older.data.title}</p></a>}
+    {newer && <a class="border-2 border-ink p-4" href={"/notatki/" + newer.slug + "/"}><p class="font-mono text-[10px] uppercase text-stamp">karta późniejsza</p><p class="mt-2 font-serif text-2xl font-bold">{newer.data.title}</p></a>}
+  </div>
+</section>
 </Skoroszyt>
